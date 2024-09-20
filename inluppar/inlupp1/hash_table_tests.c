@@ -160,12 +160,55 @@ void test_negativ_number(){
  CU_ASSERT_STRING_EQUAL(v, "-1"); 
 
 ioopm_hash_table_destroy(ht);
-
-
-
 }
 
 
+void test_count_entries(){
+  ioopm_hash_table_t* ht=ioopm_hash_table_create();
+  int size= ioopm_hash_table_size(ht);
+  //empty hash_table
+  CU_ASSERT_FALSE(size);
+
+  ioopm_hash_table_insert(ht, 1, "1");
+  size=ioopm_hash_table_size(ht);
+  //hash_table with one entry
+  CU_ASSERT_EQUAL(size, 1);
+
+  ioopm_hash_table_insert(ht, 18, "1");
+  ioopm_hash_table_insert(ht, 3, "3");
+  size=ioopm_hash_table_size(ht);
+  //hash table with multiple entries
+  CU_ASSERT_EQUAL(size,3);
+
+  ioopm_hash_table_destroy(ht);
+
+}
+
+void test_is_empty_hash_table(){
+  ioopm_hash_table_t *ht=ioopm_hash_table_create();
+  bool is_empty=ioopm_hash_table_is_empty(ht);
+  CU_ASSERT_TRUE(is_empty);
+
+  ioopm_hash_table_insert(ht, 1, "1");
+  is_empty=ioopm_hash_table_is_empty(ht);
+  CU_ASSERT_FALSE(is_empty);
+
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_clear_hash_table(){
+  ioopm_hash_table_t*ht=ioopm_hash_table_create();
+  ioopm_hash_table_clear(ht);
+  bool is_empty=ioopm_hash_table_is_empty(ht);
+  CU_ASSERT_TRUE(is_empty);
+
+  ioopm_hash_table_insert(ht, 1, "1");
+  ioopm_hash_table_clear(ht);
+  is_empty=ioopm_hash_table_is_empty(ht);
+  CU_ASSERT_TRUE(is_empty);
+
+  ioopm_hash_table_destroy(ht);
+}
 
 
 
@@ -199,7 +242,9 @@ int main() {
     (CU_add_test(my_test_suite, "test remove", test_remove) == NULL) ||
     (CU_add_test(my_test_suite, "test remove2", test_remove2) == NULL) ||
     (CU_add_test(my_test_suite, "hash table lookup negativ", test_negativ_number) == NULL) ||
-    
+    (CU_add_test(my_test_suite, "test count entries", test_count_entries) == NULL) ||
+    (CU_add_test(my_test_suite, "test is empty hashtable", test_is_empty_hash_table) == NULL) ||
+    (CU_add_test(my_test_suite, "test clear hash table", test_clear_hash_table) == NULL) ||
     0
 
   )
