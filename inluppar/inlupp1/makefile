@@ -3,3 +3,6 @@ hash_test: hash_table_tests.c
 
 hash_table: hash_table.c
 		gcc -Wall hash_table.c 
+
+mem_check: hash_table_tests
+	valgrind -s  ./hash_table_tests  
