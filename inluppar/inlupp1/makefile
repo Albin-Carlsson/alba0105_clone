@@ -6,3 +6,6 @@ hash_table: hash_table.c
 
 mem_check: hash_table_tests
 	valgrind -s  ./hash_table_tests  
+
+full_mem_check: hash_table_tests
+	valgrind -s --leak-check=full  ./hash_table_tests  

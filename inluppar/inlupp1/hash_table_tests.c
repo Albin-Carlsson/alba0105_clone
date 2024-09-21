@@ -96,11 +96,11 @@ void test_remove(){
   CU_ASSERT_PTR_NOT_NULL(result.value);
 
 
-  option_t result1 = ioopm_hash_table_remove(ht, 1);
+  result = ioopm_hash_table_remove(ht, 1);
 
-  option_t result2 = ioopm_hash_table_lookup(ht, 1);
+  result = ioopm_hash_table_lookup(ht, 1);
 
-  CU_ASSERT_FALSE(result2.success);
+  CU_ASSERT_FALSE(result.success);
 
   ioopm_hash_table_destroy(ht);
 
@@ -261,9 +261,13 @@ void test_get_values(){
 
   int *all_keys = ioopm_hash_table_keys(ht);
   char **all_values=ioopm_hash_table_values(ht);
+  for (int i = 0; i < 5; i++) {
+        printf("Key: %d, Value: %s\n", all_keys[i], all_values[i]);
+    }
 
   for(int i=0; i<5; ++i){
     int k=all_keys[i];
+
     char *v=all_values[i];
     bool key_found=false;
 
@@ -290,6 +294,52 @@ void test_get_values(){
   free(all_values);
   ioopm_hash_table_destroy(ht);
 
+}
+
+void test_has_key(){
+  ioopm_hash_table_t *ht=ioopm_hash_table_create();
+  bool found;
+
+  //looking for a key in an empty hash_table
+  found=ioopm_hash_table_has_key(ht,1);
+  CU_ASSERT_FALSE(found);
+
+  //looking for an existing key
+  ioopm_hash_table_insert(ht, 1, "one");
+  found=ioopm_hash_table_has_key(ht,1);
+  CU_ASSERT_TRUE(found);
+
+  //looking for a non existing key
+  found=ioopm_hash_table_has_key(ht,2);
+  CU_ASSERT_FALSE(found);
+
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_has_value(){
+  ioopm_hash_table_t *ht=ioopm_hash_table_create();
+  bool found;
+
+  //looking for a value in an empty hash_table
+  found=ioopm_hash_table_has_value(ht,"one");
+  CU_ASSERT_FALSE(found);
+
+  //looking for an existing value
+  ioopm_hash_table_insert(ht, 1, "one");
+  found=ioopm_hash_table_has_value(ht,"one");
+  CU_ASSERT_TRUE(found);
+
+  //looking for a strdup of a value
+  char *str=strdup("one");
+  found=ioopm_hash_table_has_value(ht,str);
+  CU_ASSERT_TRUE(found);
+
+  //looking for a non existing key
+  found=ioopm_hash_table_has_value(ht,"two");
+  CU_ASSERT_FALSE(found);
+
+  free(str);
+  ioopm_hash_table_destroy(ht);
 }
 
 
@@ -327,6 +377,8 @@ int main() {
     (CU_add_test(my_test_suite, "test clear hash table", test_clear_hash_table) == NULL) ||
     (CU_add_test(my_test_suite, "test get keys", test_get_keys) == NULL) ||
     (CU_add_test(my_test_suite, "test get values", test_get_values) == NULL) ||
+    (CU_add_test(my_test_suite, "test has key", test_has_key) == NULL) ||
+    (CU_add_test(my_test_suite, "test has value", test_has_value) == NULL) ||
     0
 
   )

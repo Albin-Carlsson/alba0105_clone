@@ -250,6 +250,8 @@ int *ioopm_hash_table_keys(ioopm_hash_table_t *ht){
     return all_keys;
 }
 
+
+
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht) {
    int size=ioopm_hash_table_size(ht);
    char **values=calloc(size, sizeof(char*));
@@ -265,4 +267,23 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht) {
    }
 
    return values;
+}
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key){
+    option_t found= ioopm_hash_table_lookup(ht,key);
+    return found.success;
+}
+
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value){
+    char **values=ioopm_hash_table_values(ht);
+    int size=ioopm_hash_table_size(ht);
+    for(int i=0; i<size; ++i){
+        if(strcmp(value,values[i]) ==0 ){
+            free(values);
+            return true;
+        }
+    }
+    free(values);
+    return false;
 }
