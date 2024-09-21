@@ -210,7 +210,87 @@ void test_clear_hash_table(){
   ioopm_hash_table_destroy(ht);
 }
 
+void test_get_keys(){
 
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+  int keys[5] = {3, 10, 42, 0, 99}; 
+
+  bool found[5] = {false};
+
+  ioopm_hash_table_insert(ht, 3, "three");
+  ioopm_hash_table_insert(ht, 10, "ten");
+  ioopm_hash_table_insert(ht,42, "fortytwo");
+  ioopm_hash_table_insert(ht, 0, "zero");
+  ioopm_hash_table_insert(ht, 99, "ninetynine");
+
+  int *all_keys = ioopm_hash_table_keys(ht);
+
+  for (int i = 0; i < 5; i++) {
+    int key_found = 0;
+    for (int j = 0; j < 5; j++) {
+      if (all_keys[i] == keys[j]) {
+        found[j] = 1; 
+        key_found = 1;
+        break;
+      }
+    }
+    if (!key_found) {
+        CU_FAIL("Found a key that was never inserted!");
+    }
+}
+
+  printf("Keys found in the hash table:\n");
+  for (int i = 0; i < 5; i++) {
+    printf("all_keys[%d] = %d\n", i, all_keys[i]);
+  }
+
+  free(all_keys);
+  ioopm_hash_table_destroy(ht);   
+}
+
+
+void test_get_values(){
+  int keys[5] = {3, 10, 42, 0, 99}; 
+  char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
+  ioopm_hash_table_t *ht=ioopm_hash_table_create();
+  
+  for(int i=0; i<5; ++i){
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+
+  int *all_keys = ioopm_hash_table_keys(ht);
+  char **all_values=ioopm_hash_table_values(ht);
+
+  for(int i=0; i<5; ++i){
+    int k=all_keys[i];
+    char *v=all_values[i];
+    bool key_found=false;
+
+    //nu går vi genom och ser om keys och values i den ny arrayen matchar med de förra
+    for (int j=0; j<5; ++j){
+      if(keys[j]==k){
+        //om de inte matchar
+        if (strcmp(v, values[j]) != 0){
+          CU_FAIL("Found a value that doesn't match the original!");
+        }
+
+        //om de matchar
+        key_found=true;
+        break; //går till nästa key,value
+      }
+    }
+
+    if (!key_found){
+      CU_FAIL("Found a key that was never inserted!");
+    }
+  }
+
+  free(all_keys);
+  free(all_values);
+  ioopm_hash_table_destroy(ht);
+
+}
 
 
 int main() {
@@ -245,6 +325,8 @@ int main() {
     (CU_add_test(my_test_suite, "test count entries", test_count_entries) == NULL) ||
     (CU_add_test(my_test_suite, "test is empty hashtable", test_is_empty_hash_table) == NULL) ||
     (CU_add_test(my_test_suite, "test clear hash table", test_clear_hash_table) == NULL) ||
+    (CU_add_test(my_test_suite, "test get keys", test_get_keys) == NULL) ||
+    (CU_add_test(my_test_suite, "test get values", test_get_values) == NULL) ||
     0
 
   )
