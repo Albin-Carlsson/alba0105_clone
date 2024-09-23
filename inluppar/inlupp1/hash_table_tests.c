@@ -184,6 +184,8 @@ void test_count_entries(){
 
 }
 
+
+
 void test_is_empty_hash_table(){
   ioopm_hash_table_t *ht=ioopm_hash_table_create();
   bool is_empty=ioopm_hash_table_is_empty(ht);
@@ -209,6 +211,8 @@ void test_clear_hash_table(){
 
   ioopm_hash_table_destroy(ht);
 }
+
+
 
 void test_get_keys(){
 
@@ -250,15 +254,20 @@ void test_get_keys(){
 }
 
 
+
+//test för ioopm_hash_table_get_values
 void test_get_values(){
+  //arrayer med keys och values
   int keys[5] = {3, 10, 42, 0, 99}; 
   char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
   ioopm_hash_table_t *ht=ioopm_hash_table_create();
   
+  //loopar genom arrayerna och insertar key med korresponderande value
   for(int i=0; i<5; ++i){
     ioopm_hash_table_insert(ht, keys[i], values[i]);
   }
 
+  //tar ut alla keys och values för jämförelse (index matchar efter man tar ut dem)
   int *all_keys = ioopm_hash_table_keys(ht);
   char **all_values=ioopm_hash_table_values(ht);
   for (int i = 0; i < 5; i++) {
@@ -296,6 +305,7 @@ void test_get_values(){
 
 }
 
+
 void test_has_key(){
   ioopm_hash_table_t *ht=ioopm_hash_table_create();
   bool found;
@@ -316,6 +326,7 @@ void test_has_key(){
   ioopm_hash_table_destroy(ht);
 }
 
+
 void test_has_value(){
   ioopm_hash_table_t *ht=ioopm_hash_table_create();
   bool found;
@@ -325,8 +336,9 @@ void test_has_value(){
   CU_ASSERT_FALSE(found);
 
   //looking for an existing value
-  ioopm_hash_table_insert(ht, 1, "one");
-  found=ioopm_hash_table_has_value(ht,"one");
+  char *str1="one";
+  ioopm_hash_table_insert(ht, 1, str1);
+  found=ioopm_hash_table_has_value(ht,str1);
   CU_ASSERT_TRUE(found);
 
   //looking for a strdup of a value
@@ -342,6 +354,61 @@ void test_has_value(){
   ioopm_hash_table_destroy(ht);
 }
 
+//test for ioopm_hash_table_all
+void test_hash_table_all()
+{
+  bool result;
+  ioopm_hash_table_t *ht=ioopm_hash_table_create();
+  char *str="one";
+
+  //testar med en tom ht
+  result= test_hash_table_all_value(ht,str );
+  CU_ASSERT_FALSE(result);
+
+  //testar med en ht där 'alla' sträng matchar all funktionen
+  ioopm_hash_table_insert(ht, 1, str);
+  result= test_hash_table_all_value(ht,str);
+  CU_ASSERT_TRUE(result);
+
+  //testar med en ht där all funktionen inte stämmer
+  char *str2="two";
+  ioopm_hash_table_insert(ht,2,str2);
+  result= test_hash_table_all_value(ht,str);
+  CU_ASSERT_FALSE(result);
+
+  
+  ioopm_hash_table_destroy(ht);
+
+}
+
+//test för ioopm_hash_table_apply_to_all mha test_change_values
+void test_hash_table_apply_all(){
+  ioopm_hash_table_t *ht=ioopm_hash_table_create();
+  char *str="one";
+  char *str2="two";
+  //insertar samma sträng i 3 olika länkar
+  ioopm_hash_table_insert(ht, 1, str);
+  ioopm_hash_table_insert(ht, 2, str);
+  ioopm_hash_table_insert(ht, 3, str);
+
+  //anropar apply to all för att ändra alla values i ht
+  ioopm_hash_table_apply_to_all(ht, test_change_value, str2);
+
+  //tar alla values ut mha ioopm_hash_table_values
+  char **all_values=ioopm_hash_table_values(ht);
+
+  //loopar genom all_values arrayen för att säkerställa att alla values==den ny strängen
+  for (int i = 0; i < 3; ++i) {
+        if (strcmp(all_values[i], str2) != 0) {
+            CU_FAIL("Value does not match expected string!");
+        }
+  }
+
+    // Clean up
+    free(all_values);
+    ioopm_hash_table_destroy(ht);
+
+}
 
 int main() {
   // First we try to set up CUnit, and exit if we fail
@@ -379,6 +446,8 @@ int main() {
     (CU_add_test(my_test_suite, "test get values", test_get_values) == NULL) ||
     (CU_add_test(my_test_suite, "test has key", test_has_key) == NULL) ||
     (CU_add_test(my_test_suite, "test has value", test_has_value) == NULL) ||
+    (CU_add_test(my_test_suite, "test hash table all", test_hash_table_all) == NULL) ||
+    (CU_add_test(my_test_suite, "test hash table apply all", test_hash_table_apply_all) == NULL) ||
     0
 
   )

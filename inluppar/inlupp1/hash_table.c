@@ -16,6 +16,8 @@
 typedef struct entry entry_t;
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t;
+typedef bool ioopm_predicate(int key, char *value, void *extra);
+typedef void ioopm_apply_function(int key, char **value, void *extra);
 
 
 struct entry
@@ -269,12 +271,9 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht) {
    return values;
 }
 
-bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key){
-    option_t found= ioopm_hash_table_lookup(ht,key);
-    return found.success;
-}
 
 
+/*
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value){
     char **values=ioopm_hash_table_values(ht);
     int size=ioopm_hash_table_size(ht);
@@ -287,3 +286,88 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value){
     free(values);
     return false;
 }
+*/
+
+static bool key_equiv(int key, char *value_ignored, void *x)
+{
+  int *other_key_ptr = x;
+  int other_key = *other_key_ptr;
+  return key == other_key;
+}
+
+static bool value_equiv(int key_ignored, char *value, void *x)
+{
+  char *other_value_ptr = x;
+  return strcmp(value, other_value_ptr)==0 ;
+}
+
+
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate *pred, void *arg) {
+    for (int i = 0; i < No_Buckets; ++i) {
+        entry_t *current = ht->buckets[i].next;
+        while (current) {
+            int key = current->key;
+            char *value = current->value;
+            if (pred(key, value, arg)) {  
+                return true;  
+            }
+            current = current->next;
+        }
+    }
+    return false;  
+}
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
+{
+  return ioopm_hash_table_any(ht, key_equiv, &key);
+}
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value){
+ return ioopm_hash_table_any(ht, value_equiv, value);
+}
+
+
+//all values/keys satisfy a predicate
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate *pred, void *arg){
+    if (ioopm_hash_table_is_empty(ht)) {
+        return false;  // If the hash table is empty, all entries trivially satisfy the predicate
+    }
+
+    for (int i = 0; i < No_Buckets; ++i) {
+    
+        entry_t *current = ht->buckets[i].next;
+        while (current) {
+            int key = current->key;
+            char *value = current->value;
+            if (!pred(key, value, arg)) {  
+                return false;  
+            }
+            current = current->next;
+        }
+    }
+    return true; 
+}
+
+bool test_hash_table_all_value(ioopm_hash_table_t *ht, char *value){
+    return ioopm_hash_table_all(ht, value_equiv, value);
+}
+
+void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function *apply_fun, void *arg){
+    for(int i=0; i<No_Buckets; ++i){
+        entry_t *current = ht->buckets[i].next;
+        while(current)
+        {
+            int key = current->key;
+            char **value = &(current->value);
+            apply_fun(key, value, arg);
+            current = current->next;
+        }
+    }
+}
+
+void test_change_value(int key, char **value, void *arg){
+    if (arg != NULL) {
+        *value = arg; 
+    }
+}
+
