@@ -74,7 +74,7 @@ void entry_destroy( entry_t * entry) {
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
 
     for ( int i = 0 ; i <  No_Buckets; i++) {
-        entry_destroy(&ht->buckets[i]);
+        entry_destroy(&(ht->buckets[i]));
     }
 
     free(ht);
@@ -220,36 +220,37 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht){
     }
 }
 
-int *ioopm_hash_table_keys(ioopm_hash_table_t *ht){
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht){
 
-    int num_keys = ioopm_hash_table_size(ht);
-    int * all_keys = calloc(num_keys, sizeof(int)); 
+  ioopm_list_t * list = ioopm_linked_list_create();
+
+  int num_keys = ioopm_hash_table_size(ht);
+
     int key_index = 0;
     int current_key;
 
     if (ioopm_hash_table_is_empty(ht)) {
-        return all_keys;
-    }
+    return list;
+  }
 
-    for (int i = 0; i < No_Buckets; i ++){
-        entry_t *current_bucket = &ht->buckets[i];
+  for (int i = 0; i < No_Buckets; i ++){
+   entry_t *current_bucket = &ht->buckets[i];
 
-        if (current_bucket -> next == NULL){
-            continue;
-        }
+   if (current_bucket -> next == NULL){
+      continue;
+   }
 
-        entry_t *current_entry = current_bucket-> next; 
+   entry_t *current_entry = current_bucket-> next; 
 
-        while (current_entry != NULL) {
-            current_key = current_entry->key;
-            all_keys[key_index] = current_key;
-            key_index = key_index + 1; 
-            current_entry = current_entry->next;
-         }
+    while (current_entry != NULL) {
+    current_key = current_entry->key;
+    ioopm_linked_list_append(list, current_key);
 
-    }
+    current_entry = current_entry->next;
+  }
 
-    return all_keys;
+ }
+  return list;
 }
 
 

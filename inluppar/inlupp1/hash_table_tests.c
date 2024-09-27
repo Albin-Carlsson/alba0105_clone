@@ -184,8 +184,6 @@ void test_count_entries(){
 
 }
 
-
-
 void test_is_empty_hash_table(){
   ioopm_hash_table_t *ht=ioopm_hash_table_create();
   bool is_empty=ioopm_hash_table_is_empty(ht);
@@ -216,67 +214,69 @@ void test_clear_hash_table(){
 
 void test_get_keys(){
 
-  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
 
-  int keys[5] = {3, 10, 42, 0, 99}; 
+    int keys[5] = {3, 10, 42, 0, 99}; 
 
-  bool found[5] = {false};
+    bool found[5] = {false};
 
-  ioopm_hash_table_insert(ht, 3, "three");
-  ioopm_hash_table_insert(ht, 10, "ten");
-  ioopm_hash_table_insert(ht,42, "fortytwo");
-  ioopm_hash_table_insert(ht, 0, "zero");
-  ioopm_hash_table_insert(ht, 99, "ninetynine");
+    ioopm_hash_table_insert(ht, 3, "three");
+    ioopm_hash_table_insert(ht, 10, "ten");
+    ioopm_hash_table_insert(ht,42, "fortytwo");
+    ioopm_hash_table_insert(ht, 0, "zero");
+    ioopm_hash_table_insert(ht, 99, "ninetynine");
 
-  int *all_keys = ioopm_hash_table_keys(ht);
+ioopm_list_t *all_keys = ioopm_hash_table_keys(ht);
 
-  for (int i = 0; i < 5; i++) {
+for (int i = 0; i < 5; i++) {
     int key_found = 0;
     for (int j = 0; j < 5; j++) {
-      if (all_keys[i] == keys[j]) {
-        found[j] = 1; 
-        key_found = 1;
-        break;
-      }
+      option_list_t get = ioopm_linked_list_get(all_keys, i);
+      int val = get.ptr->value;
+        if (val == keys[j]) {
+            found[j] = 1; 
+            key_found = 1;
+            break;
+        }
     }
     if (!key_found) {
         CU_FAIL("Found a key that was never inserted!");
     }
 }
 
-  printf("Keys found in the hash table:\n");
-  for (int i = 0; i < 5; i++) {
-    printf("all_keys[%d] = %d\n", i, all_keys[i]);
-  }
+    printf("Keys found in the hash table:\n");
+    for (int i = 0; i < 5; i++) {
+            option_list_t get = ioopm_linked_list_get(all_keys, i);
+      int val = get.ptr->value;
 
-  free(all_keys);
-  ioopm_hash_table_destroy(ht);   
+        printf("all_keys[%d] = %d\n", i, val );
+    }
+
+
+ioopm_hash_table_destroy(ht);  
+ioopm_linked_list_destroy(all_keys); 
+
 }
 
 
 
 //test för ioopm_hash_table_get_values
 void test_get_values(){
-  //arrayer med keys och values
   int keys[5] = {3, 10, 42, 0, 99}; 
   char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
   ioopm_hash_table_t *ht=ioopm_hash_table_create();
   
-  //loopar genom arrayerna och insertar key med korresponderande value
   for(int i=0; i<5; ++i){
     ioopm_hash_table_insert(ht, keys[i], values[i]);
   }
 
-  //tar ut alla keys och values för jämförelse (index matchar efter man tar ut dem)
-  int *all_keys = ioopm_hash_table_keys(ht);
+  ioopm_list_t *all_keys = ioopm_hash_table_keys(ht);
   char **all_values=ioopm_hash_table_values(ht);
-  for (int i = 0; i < 5; i++) {
-        printf("Key: %d, Value: %s\n", all_keys[i], all_values[i]);
-    }
 
   for(int i=0; i<5; ++i){
-    int k=all_keys[i];
-
+      option_list_t get = ioopm_linked_list_get(all_keys, i);
+      int val = get.ptr->value;
+    int k=val;
     char *v=all_values[i];
     bool key_found=false;
 
@@ -299,9 +299,16 @@ void test_get_values(){
     }
   }
 
-  free(all_keys);
+  printf("Keys and values found in the hash table:\n");
+for (int i = 0; i < 5; ++i) {
+        option_list_t get = ioopm_linked_list_get(all_keys, i);
+      int val = get.ptr->value;
+    printf("Key: %d, Value: %s\n", val, all_values[i]);
+}
+
   free(all_values);
   ioopm_hash_table_destroy(ht);
+  ioopm_linked_list_destroy(all_keys);
 
 }
 
@@ -342,7 +349,7 @@ void test_has_value(){
   CU_ASSERT_TRUE(found);
 
   //looking for a strdup of a value
-  char *str=strdup("one");
+  char *str=strdup(str1);
   found=ioopm_hash_table_has_value(ht,str);
   CU_ASSERT_TRUE(found);
 
@@ -385,7 +392,7 @@ void test_hash_table_all()
 void test_hash_table_apply_all(){
   ioopm_hash_table_t *ht=ioopm_hash_table_create();
   char *str="one";
-  char *str2="two";
+  char *str2="twoo";
   //insertar samma sträng i 3 olika länkar
   ioopm_hash_table_insert(ht, 1, str);
   ioopm_hash_table_insert(ht, 2, str);
@@ -403,6 +410,8 @@ void test_hash_table_apply_all(){
             CU_FAIL("Value does not match expected string!");
         }
   }
+  bool result=ioopm_hash_table_has_value(ht, str2);
+  CU_ASSERT_TRUE(result);
 
     // Clean up
     free(all_values);
