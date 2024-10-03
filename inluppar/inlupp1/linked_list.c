@@ -9,14 +9,29 @@
 
 typedef struct list ioopm_list_t; 
 typedef struct link ioopm_link_t;
-typedef struct option option_t;
-typedef bool ioopm_int_predicate(int value,int extra);
-typedef void ioopm_apply_int_function(ioopm_link_t *link, int extra);
+typedef struct option_list option_list_t;
+typedef bool ioopm_int_predicate(elem_t value, elem_t extra);
+typedef void ioopm_apply_int_function(ioopm_link_t *link, elem_t extra);
 
-#define Success(link) (option_t) {.success=true, .ptr=link};
-#define Failure() (option_t) {.success=false};
+#define Success(link) (option_list_t) {.success=true, .ptr=link};
+#define Failure() (option_list_t) {.success=false};
 
-static option_t find_previous_link(ioopm_list_t *list, int index){
+bool int_compare(elem_t a, elem_t b){
+  return a.i==b.i;
+}
+
+bool char_compare(elem_t a, elem_t b){
+    if (a.c == NULL || b.c == NULL) {
+        return false; // Return false if either string is NULL (handle as you see fit)
+    }
+    return strcmp(a.c,b.c)==0;
+}
+
+bool bool_compare(elem_t a, elem_t b){
+    return a.b == b.b;
+}
+
+static option_list_t find_previous_link(ioopm_list_t *list, int index){
     //om indexet är negativ
     if (index<0)
     {
@@ -40,21 +55,21 @@ static option_t find_previous_link(ioopm_list_t *list, int index){
 }
 
 
-ioopm_list_t *ioopm_linked_list_create(void){
+ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function *eq_fn){
     //allokerar minne för listan
-    ioopm_list_t *lst=calloc(1,sizeof(ioopm_list_t));
+    ioopm_list_t *list=calloc(1,sizeof(ioopm_list_t));
 
     //allokerar minne för dummy och initierar de
     ioopm_link_t *dummy=calloc(1,sizeof(ioopm_link_t));
-    dummy->value=0;
+    dummy->value=int_elem(0);
     dummy->next=NULL;
 
     //länkar dummyn till listan
-    lst->first=dummy;
-    lst->last=dummy;
-    lst->size=0;
-
-    return lst;
+    list->first=dummy;
+    list->last=dummy;
+    list->size=0;
+    list->eq_fn=eq_fn;
+    return list;
 }
 
 void ioopm_linked_list_destroy(ioopm_list_t *list){
@@ -69,7 +84,7 @@ void ioopm_linked_list_destroy(ioopm_list_t *list){
     free(list); //frigör listan
 }
 
-void ioopm_linked_list_append(ioopm_list_t *list, int value){
+void ioopm_linked_list_append(ioopm_list_t *list, elem_t value){
     ioopm_link_t *new_link=malloc(sizeof(ioopm_link_t));
     new_link->value=value;
     new_link->next=NULL;
@@ -79,18 +94,23 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value){
 }
 
 
-void ioopm_linked_list_prepend(ioopm_list_t *list, int value){
+void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value){
     ioopm_link_t *new_link=malloc(sizeof(ioopm_link_t));
-    ioopm_link_t *current=list->first;
+    ioopm_link_t *current=list->first;//dummy
     new_link->value=value;
+    if(current->next==NULL)
+    {
+        list->last=new_link;
+    }
     new_link->next=current->next;
     current->next=new_link;
+
     list->size=list->size +1;
 }
 
-option_t ioopm_linked_list_insert(ioopm_list_t *list, int index, int value){
+option_list_t ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value){
     //undersöker om den hittar en previous link
-    option_t result=find_previous_link(list, index);
+    option_list_t result=find_previous_link(list, index);
     if (!result.success){
         return Failure();
     }
@@ -112,9 +132,9 @@ option_t ioopm_linked_list_insert(ioopm_list_t *list, int index, int value){
     return Success(new_link);
 }
 
-option_t ioopm_linked_list_remove(ioopm_list_t *list, int index){
+option_list_t ioopm_linked_list_remove(ioopm_list_t *list, int index){
     //undersöker om den hittar en previous link
-    option_t result=find_previous_link(list, index);
+    option_list_t result=find_previous_link(list, index);
     if (!result.success){
         return Failure();
     }
@@ -144,9 +164,9 @@ option_t ioopm_linked_list_remove(ioopm_list_t *list, int index){
     return Success(removed);
 }
 
-option_t ioopm_linked_list_get(ioopm_list_t *list, int index){
+option_list_t ioopm_linked_list_get(ioopm_list_t *list, int index){
     //undersöker om den hittar en previous link
-    option_t result=find_previous_link(list, index);
+    option_list_t result=find_previous_link(list, index);
     if (!result.success){
         return Failure();
     }
@@ -161,19 +181,15 @@ option_t ioopm_linked_list_get(ioopm_list_t *list, int index){
     return Success(to_get);
 }
 
-bool ioopm_linked_list_contains(ioopm_list_t *list, int element){
-    ioopm_link_t * current = list->first->next; // hoppa Ã¶ver dummy
+bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element){
+    ioopm_link_t * current = list->first->next; // hoppa över dummy
 
-    if( current == NULL){
-        return false; 
-    }
-
-    for (int i = 0; current != NULL; i ++){ 
-        int value = current->value;
-        if((value == element)) {
+    while (current){
+        if(list->eq_fn(current->value, element)) //använder jämföresle funktionen
+        {
             return true;
         }
-        current = current->next;
+        current=current->next;
     }
     return false;
 }
@@ -206,7 +222,7 @@ void ioopm_linked_list_clear(ioopm_list_t *list){
     
 }
 
-bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate *prop, int extra){
+bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate *prop, elem_t extra){
     if (ioopm_linked_list_is_empty(list)){
         return false;
     }
@@ -221,12 +237,12 @@ bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate *prop, int ex
     return true;
 }
 
-bool ioopm_linked_list_modulo(int value, int extra) {
-    int rest = value % extra;
+bool ioopm_linked_list_modulo( elem_t value, elem_t extra) {
+    int rest = value.i % extra.i;
     return (rest == 0);
 }
 
-bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate *prop, int extra){
+bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate *prop, elem_t extra){
     if (ioopm_linked_list_is_empty(list)){
         return false;
     }
@@ -242,7 +258,7 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate *prop, int ex
 }
 
 
-void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function *fun, int extra){
+void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function *fun, elem_t extra){
     if (ioopm_linked_list_is_empty(list)){
         printf("Empty list");
         return;
@@ -256,6 +272,6 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
     }
 }
 
-void ioopm_linked_list_change_all(ioopm_link_t *link, int extra){
+void ioopm_linked_list_change_all(ioopm_link_t *link, elem_t extra){
     link->value=extra;
 }

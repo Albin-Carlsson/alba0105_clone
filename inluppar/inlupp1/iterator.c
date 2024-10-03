@@ -1,4 +1,5 @@
 #include "iterator.h"
+#include "common.h"
 #include "linked_list.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,15 +28,15 @@ bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter) {
 
 
 
-int ioopm_iterator_next(ioopm_list_iterator_t *iter) {
+elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter) {
     if (iter->current == NULL) {
         puts("Iterator is at the end of the list or the list is empty");
-        return 0; // Eller hantera det på ett sätt som passar din applikation
+        return int_elem(0); // Eller hantera det på ett sätt som passar din applikation
     }
     ioopm_link_t * new_link = iter->current->next;
     if (new_link == NULL) {
         puts("End of list");
-        return 0;
+        return int_elem(0);
     }
     iter->current = new_link;
     return new_link->value;
@@ -48,8 +49,8 @@ void ioopm_iterator_reset(ioopm_list_iterator_t *iter){
 }
 
 
-int ioopm_iterator_current(ioopm_list_iterator_t *iter){
-    int elem = iter->current->value;
+elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter){
+    elem_t elem = iter->current->value;
 
     return elem;
 }
