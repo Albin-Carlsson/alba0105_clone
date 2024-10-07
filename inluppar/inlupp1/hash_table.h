@@ -7,7 +7,7 @@
 /**
  * @file hash_table.h
  * @author Alexandra Barbu and Annika Kuusrainen
- * @date 20 Sep 2024
+ * @date 7 october 2024
  * @brief Simple hash table that maps integer keys to string values.
  *
  * Here typically goes a more extensive explanation of what the header
@@ -17,6 +17,7 @@
  * @see $CANVAS_OBJECT_REFERENCE$/assignments/gb54499f3b7b264e3af3b68c756090f52
  */
 
+//DEFINITIONS
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t;
 typedef bool ioopm_predicate(elem_t key, elem_t value, elem_t extra, ioopm_eq_function *eq_fn);
@@ -88,6 +89,7 @@ bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key);
 /// @brief check if a hash table has an entry with a given value
 /// @param h hash table operated upon
 /// @param value the value sought
+
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value);
 
 /// @brief check if a predicate is satisfied by all entries in a hash table
@@ -108,14 +110,15 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate *pred, elem_t 
 /// @param arg extra argument to apply_fun
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function *apply_fun, elem_t arg);
 
-
-/// @brief test funcion for apply_all
-bool test_hash_table_all_value(ioopm_hash_table_t *ht, elem_t value);
-
-void test_change_value(elem_t key, elem_t *value, elem_t arg); 
-
+/// @brief hash function for an integer
+/// @param elem expects an integer to be hashed
+/// @return int, to be used as a key
 int int_key_hfunc(elem_t elem);
+
+/// @brief hash function for a string
+/// @param elem expects a string to be hashed
+/// @return int, to be used as key
 int string_key_hfunc(elem_t elem);
-int float_key_hfunc(elem_t elem);
+
 
 

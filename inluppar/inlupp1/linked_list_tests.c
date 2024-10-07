@@ -3,6 +3,9 @@
 #include <CUnit/Basic.h>
 
 
+//Helper functions definitions
+void ioopm_linked_list_change_all(ioopm_link_t *link, elem_t extra);
+
 int init_suite(void) {
   // Change this function if you want to do something *before* you
   // run a test suite

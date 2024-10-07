@@ -1,6 +1,9 @@
 #include "hash_table.h"
 #include <CUnit/Basic.h>
 
+//Helper functions declarations
+void test_change_value(elem_t key, elem_t *value, elem_t arg);
+bool test_hash_table_all_value(ioopm_hash_table_t *ht, elem_t value);
 
 int init_suite(void) {
   // Change this function if you want to do something *before* you
