@@ -1,9 +1,41 @@
-Initial Profiling Results
+#Getting started
+In order to be able to run the program you need to have a C compiler (in our case we use gcc), a virtual machine (if you have non-linux OS), CUnit testing framework, valgrind installed (for checking any memory leaks), and gcov tool installed(for checking the coverage of the tests).
+
+#Running tests
+In order to run tests for the code we have created makefile commandos. For example, for running the tests of hash_table_tests.c file, follow the instructions:
+$make hash_test
+$./hash_table_tests
+Please check the makefile provided to run the test on all files.
+
+##Coverage tests
+The tool used for checking the coverage is gcov. In order to test the coverage of our tests, run the following commands:
+$make file_coverage
+$./file_test
+$gcov -b -c file
+(file is the desired .gcda file)
+
+Current coverage procents:
+File                      Line coverage %          Branch coverage %
+hash_table.c                    98                         100
+linked_list.c                   99                         100
+iterator.c                     100                         100
+freq_count.c                    95                         100
+
+
+#Good to know
+##Error handling
+In order to handle errors from functions (such as a failed insert or remove) we have introduced the struct option(both for the hash table and lists). Most of the functions return such a struct that indicates if the operation was successfull through a true bool, and if so a pointer to the variable that has been changed or the false bool if it failed. 
+
+##Important information
+-The hashtable doesn't take ownership over its keys and values
+-It is the programmer's responsibility to correctly introduce elements into the hash table/linked list based on the comparing function provided (can't introduce integers in a list where the comparison function takes char parameters).
+
+#Initial Profiling Results
 
 The results presented below can be found in the analysis.txt. Here are the commandos needed for that:
-make profile
-./my program file.txt (the file is the different files we tested on)
-gprof my_program gmon.out > analysis.txt
+$make profile
+$./my program file.txt (the file is the different files we tested on)
+$gprof my_program gmon.out > analysis.txt
 
 
 

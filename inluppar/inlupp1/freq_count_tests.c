@@ -11,9 +11,9 @@
 #include <CUnit/Basic.h>
 
 // declarations of the functions to be tested
-void process_word(char *word, ioopm_hash_table_t *ht);
-void process_file(char *filename, ioopm_hash_table_t *ht);
-void free_all_duplicates(ioopm_hash_table_t *ht);
+void process_word(char* word, ioopm_hash_table_t* ht);
+void process_file(char* filename, ioopm_hash_table_t* ht);
+void free_all_duplicates(ioopm_hash_table_t* ht);
 
 int init_suite(void)
 {
@@ -30,7 +30,7 @@ int clean_suite(void)
 }
 
 // Helper function to create a hash table for testing
-static ioopm_hash_table_t *create_test_hash_table()
+static ioopm_hash_table_t* create_test_hash_table()
 {
   return ioopm_hash_table_create(int_compare, char_compare, string_key_hfunc);
 }
@@ -38,8 +38,8 @@ static ioopm_hash_table_t *create_test_hash_table()
 // Test case for process_word: inserting a new word
 void test_process_word_insert_new()
 {
-  ioopm_hash_table_t *ht = create_test_hash_table();
-  char *word = "test";
+  ioopm_hash_table_t* ht = create_test_hash_table();
+  char* word = "test";
 
   process_word(word, ht);
 
@@ -54,13 +54,13 @@ void test_process_word_insert_new()
 // inserting the same word twice should increment its frequency to 2
 void test_process_word_insert_duplicate()
 {
-  ioopm_hash_table_t *ht = create_test_hash_table();
-  char *word = "duplicate";
+  ioopm_hash_table_t* ht = create_test_hash_table();
+  char* word = "duplicate";
 
   process_word(word, ht);
   process_word(word, ht);
 
-  option_t result = ioopm_hash_table_lookup(ht, (elem_t){.c = word});
+  option_t result = ioopm_hash_table_lookup(ht, (elem_t) { .c = word });
   CU_ASSERT_TRUE(result.success);
   CU_ASSERT_EQUAL(result.value.i, 2);
 
@@ -70,10 +70,10 @@ void test_process_word_insert_duplicate()
 
 void test_process_word_multiple_unique_words()
 {
-  ioopm_hash_table_t *ht = create_test_hash_table();
+  ioopm_hash_table_t* ht = create_test_hash_table();
 
   // Array of unique words to insert
-  char *words[] = {"apple", "banana", "cherry", "date", "elderberry"};
+  char* words[] = { "apple", "banana", "cherry", "date", "elderberry" };
   size_t num_words = sizeof(words) / sizeof(words[0]);
 
   // Insert each word into the hash table
@@ -85,7 +85,7 @@ void test_process_word_multiple_unique_words()
   // Verify that each word exists with a frequency of 1
   for (size_t i = 0; i < num_words; i++)
   {
-    option_t result = ioopm_hash_table_lookup(ht, (elem_t){.c = words[i]});
+    option_t result = ioopm_hash_table_lookup(ht, (elem_t) { .c = words[i] });
     CU_ASSERT_TRUE(result.success);
     CU_ASSERT_EQUAL(result.value.i, 1);
 
@@ -104,11 +104,11 @@ void test_process_word_multiple_unique_words()
 void test_process_file_empty()
 {
   // Setup
-  ioopm_hash_table_t *ht = create_test_hash_table();
-  char *test_filename = "empty_file.txt";
+  ioopm_hash_table_t* ht = create_test_hash_table();
+  char* test_filename = "empty_file.txt";
 
   // Create an empty file
-  FILE *file = fopen(test_filename, "w");
+  FILE* file = fopen(test_filename, "w");
   assert(file);
   fclose(file);
 
@@ -128,11 +128,11 @@ void test_process_file_empty()
 void test_process_file_multiple_words()
 {
   // Setup
-  ioopm_hash_table_t *ht = create_test_hash_table();
-  char *test_filename = "test_file.txt";
+  ioopm_hash_table_t* ht = create_test_hash_table();
+  char* test_filename = "test_file.txt";
 
   // Create test file with known content
-  FILE *file = fopen(test_filename, "w");
+  FILE* file = fopen(test_filename, "w");
   assert(file);
   fprintf(file, "apple banana apple orange\nbanana apple\n");
   fclose(file);
@@ -141,9 +141,9 @@ void test_process_file_multiple_words()
   process_file(test_filename, ht);
 
   // Check that the word counts are correct
-  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t){.c = "apple"}).value.i, 3);
-  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t){.c = "banana"}).value.i, 2);
-  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t){.c = "orange"}).value.i, 1);
+  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t) { .c = "apple" }).value.i, 3);
+  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t) { .c = "banana" }).value.i, 2);
+  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t) { .c = "orange" }).value.i, 1);
 
   // Cleanup
   free_all_duplicates(ht);
@@ -155,8 +155,8 @@ void test_process_file_multiple_words()
 void test_process_file_nonexistent()
 {
   // Setup
-  ioopm_hash_table_t *ht = create_test_hash_table();
-  char *test_filename = "nonexistent_file.txt";
+  ioopm_hash_table_t* ht = create_test_hash_table();
+  char* test_filename = "nonexistent_file.txt";
 
   // Run the function (the file doesn't exist)
   process_file(test_filename, ht);
@@ -172,11 +172,11 @@ void test_process_file_nonexistent()
 void test_process_file_repeated_words()
 {
   // Setup
-  ioopm_hash_table_t *ht = create_test_hash_table();
-  char *test_filename = "repeated_words.txt";
+  ioopm_hash_table_t* ht = create_test_hash_table();
+  char* test_filename = "repeated_words.txt";
 
   // Create test file with repeated content
-  FILE *file = fopen(test_filename, "w");
+  FILE* file = fopen(test_filename, "w");
   assert(file);
   fprintf(file, "hello hello hello\n");
   fclose(file);
@@ -185,7 +185,7 @@ void test_process_file_repeated_words()
   process_file(test_filename, ht);
 
   // Check that the word counts are correct
-  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t){.c = "hello"}).value.i, 3);
+  CU_ASSERT_EQUAL(ioopm_hash_table_lookup(ht, (elem_t) { .c = "hello" }).value.i, 3);
 
   // Cleanup
   free_all_duplicates(ht);
@@ -216,18 +216,18 @@ int main()
   // copy a line below and change the information
   if (
 
-      (CU_add_test(my_test_suite, "test process word insert new", test_process_word_insert_new) == NULL) ||
-      (CU_add_test(my_test_suite, "test process word insert duplicate", test_process_word_insert_duplicate) == NULL) ||
-      (CU_add_test(my_test_suite, "test process word multiple unique", test_process_word_multiple_unique_words) == NULL) ||
-      (CU_add_test(my_test_suite, "test process file empty", test_process_file_empty) == NULL) ||
-      (CU_add_test(my_test_suite, "test process file multiple words", test_process_file_multiple_words) == NULL) ||
-      (CU_add_test(my_test_suite, "test process file nonexistent file", test_process_file_nonexistent) == NULL) ||
-      (CU_add_test(my_test_suite, "test process file repeated words", test_process_file_repeated_words) == NULL) ||
+    (CU_add_test(my_test_suite, "test process word insert new", test_process_word_insert_new) == NULL) ||
+    (CU_add_test(my_test_suite, "test process word insert duplicate", test_process_word_insert_duplicate) == NULL) ||
+    (CU_add_test(my_test_suite, "test process word multiple unique", test_process_word_multiple_unique_words) == NULL) ||
+    (CU_add_test(my_test_suite, "test process file empty", test_process_file_empty) == NULL) ||
+    (CU_add_test(my_test_suite, "test process file multiple words", test_process_file_multiple_words) == NULL) ||
+    (CU_add_test(my_test_suite, "test process file nonexistent file", test_process_file_nonexistent) == NULL) ||
+    (CU_add_test(my_test_suite, "test process file repeated words", test_process_file_repeated_words) == NULL) ||
 
 
-      0
+    0
 
-  )
+    )
   {
     // If adding any of the tests fails, we tear down CUnit and exit
     CU_cleanup_registry();

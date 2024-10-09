@@ -15,113 +15,125 @@ int clean_suite(void) {
 }
 
 
-void test_iter_has_next(){
+void test_iter_has_next() {
 
-    ioopm_list_t * list = ioopm_linked_list_create(int_compare);
+  ioopm_list_t* list = ioopm_linked_list_create(int_compare);
 
-    ioopm_linked_list_append(list, int_elem(1));
+  ioopm_linked_list_append(list, int_elem(1));
 
-    ioopm_list_iterator_t * iter = ioopm_list_iterator(list);
+  ioopm_list_iterator_t* iter = ioopm_list_iterator(list);
 
-    bool result = ioopm_iterator_has_next(iter);
+  bool result = ioopm_iterator_has_next(iter);
 
-    CU_ASSERT_TRUE(result);
+  CU_ASSERT_TRUE(result);
 
-    ioopm_iterator_destroy(iter);
-    ioopm_linked_list_destroy(list);
-
-}
-
-void test_iter_next(){
-
-ioopm_list_t * list = ioopm_linked_list_create(int_compare);
-ioopm_list_iterator_t * iter = ioopm_list_iterator(list);
-
- ioopm_linked_list_append(list, int_elem(1));
- ioopm_linked_list_append(list, int_elem(2));
-
- elem_t elem = ioopm_iterator_next(iter);
-
- CU_ASSERT_EQUAL(1, elem.i);
-
-elem = ioopm_iterator_next(iter);
-
- CU_ASSERT_EQUAL(2, elem.i);
-
- ioopm_iterator_destroy(iter);
-
- ioopm_linked_list_destroy(list);
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(list);
 
 }
 
-void test_iter_reset(){
-ioopm_list_t * list = ioopm_linked_list_create(int_compare);
-ioopm_list_iterator_t * iter = ioopm_list_iterator(list);
+void test_iter_next() {
 
- ioopm_linked_list_append(list, int_elem(1));
- ioopm_linked_list_append(list, int_elem(2));
+  ioopm_list_t* list = ioopm_linked_list_create(int_compare);
+  ioopm_list_iterator_t* iter = ioopm_list_iterator(list);
 
- elem_t elem = ioopm_iterator_next(iter);
- elem = ioopm_iterator_next(iter);
+  ioopm_linked_list_append(list, int_elem(1));
+  ioopm_linked_list_append(list, int_elem(2));
+
+  elem_t elem = ioopm_iterator_next(iter);
+
+  CU_ASSERT_EQUAL(1, elem.i);
+
+  elem = ioopm_iterator_next(iter);
 
   CU_ASSERT_EQUAL(2, elem.i);
 
+  ioopm_iterator_destroy(iter);
 
- ioopm_iterator_reset(iter);
- elem = ioopm_iterator_next(iter);
-
- CU_ASSERT_EQUAL(1, elem.i);
-
- ioopm_iterator_destroy(iter);
- ioopm_linked_list_destroy(list);
-
+  ioopm_linked_list_destroy(list);
 }
 
 
-void test_iter_current(){
+void test_next_empty() {
+  ioopm_list_t* list = ioopm_linked_list_create(int_compare);
+  ioopm_list_iterator_t* iter = ioopm_list_iterator(list);
 
-ioopm_list_t * list = ioopm_linked_list_create(int_compare);
-ioopm_list_iterator_t * iter = ioopm_list_iterator(list);
+  elem_t result = ioopm_iterator_next(iter);
 
- ioopm_linked_list_append(list, int_elem(1));
- ioopm_linked_list_append(list, int_elem(2));
+  int result1 = result.i;
 
- elem_t elem = ioopm_iterator_next(iter);
- elem = ioopm_iterator_next(iter);
-
- elem_t val = ioopm_iterator_current(iter);
-
- CU_ASSERT_EQUAL(2, val.i);
+  CU_ASSERT_EQUAL(0, result1);
 
   ioopm_iterator_destroy(iter);
- ioopm_linked_list_destroy(list);
+  ioopm_linked_list_destroy(list);
 }
 
-/*
-void test_iter_remove(){
-
-ioopm_list_t * list = ioopm_linked_list_create();
-ioopm_list_iterator_t * iter = ioopm_list_iterator(list);
-
- ioopm_linked_list_append(list, 1);
- ioopm_linked_list_append(list, 2);
- ioopm_linked_list_append(list, 3);
-
-  int elem = ioopm_iterator_next(iter);
- elem = ioopm_iterator_next(iter);
-
- ioopm_iterator_remove(iter);
-
- elem = ioopm_iterator_current(iter);
 
 
- CU_ASSERT_EQUAL(3, elem);
+void test_has_next_empty() {
 
-   ioopm_iterator_destroy(iter);
- ioopm_linked_list_destroy(list);
- 
+  ioopm_list_t* list = ioopm_linked_list_create(int_compare);
+  ioopm_list_iterator_t* iter = ioopm_list_iterator(list);
+
+  ioopm_linked_list_append(list, int_elem(1));
+  bool result = ioopm_iterator_has_next(iter);
+  CU_ASSERT_TRUE(result);
+
+  elem_t next = ioopm_iterator_next(iter);
+  result = ioopm_iterator_has_next(iter);
+  CU_ASSERT_FALSE(result);
+
+  next = ioopm_iterator_next(iter);
+  result = ioopm_iterator_has_next(iter);
+  CU_ASSERT_FALSE(result);
+
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(list);
 }
-*/
+
+
+
+void test_iter_reset() {
+  ioopm_list_t* list = ioopm_linked_list_create(int_compare);
+  ioopm_list_iterator_t* iter = ioopm_list_iterator(list);
+
+  ioopm_linked_list_append(list, int_elem(1));
+  ioopm_linked_list_append(list, int_elem(2));
+
+  elem_t elem = ioopm_iterator_next(iter);
+  elem = ioopm_iterator_next(iter);
+  CU_ASSERT_EQUAL(2, elem.i);
+
+
+  ioopm_iterator_reset(iter);
+  elem = ioopm_iterator_next(iter);
+  CU_ASSERT_EQUAL(1, elem.i);
+
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(list);
+
+}
+
+
+void test_iter_current() {
+
+  ioopm_list_t* list = ioopm_linked_list_create(int_compare);
+  ioopm_list_iterator_t* iter = ioopm_list_iterator(list);
+
+  ioopm_linked_list_append(list, int_elem(1));
+  ioopm_linked_list_append(list, int_elem(2));
+
+  elem_t elem = ioopm_iterator_next(iter);
+  elem = ioopm_iterator_next(iter);
+
+  elem_t val = ioopm_iterator_current(iter);
+
+  CU_ASSERT_EQUAL(2, val.i);
+
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(list);
+}
+
 
 
 
@@ -139,9 +151,9 @@ int main() {
   // the init and cleanup functions
   CU_pSuite my_test_suite = CU_add_suite("My awesome test suite", init_suite, clean_suite);
   if (my_test_suite == NULL) {
-      // If the test suite could not be added, tear down CUnit and exit
-      CU_cleanup_registry();
-      return CU_get_error();
+    // If the test suite could not be added, tear down CUnit and exit
+    CU_cleanup_registry();
+    return CU_get_error();
   }
 
   // This is where we add the test functions to our test suite.
@@ -154,21 +166,20 @@ int main() {
     (CU_add_test(my_test_suite, "test iter next", test_iter_next) == NULL) ||
     (CU_add_test(my_test_suite, "test iter reset", test_iter_reset) == NULL) ||
     (CU_add_test(my_test_suite, "test iter current", test_iter_current) == NULL) ||
-    //(CU_add_test(my_test_suite, "test iter remove", test_iter_remove) == NULL) ||
-    
-    
+    (CU_add_test(my_test_suite, "test next empty", test_next_empty) == NULL) ||
+    (CU_add_test(my_test_suite, "test has next empty", test_has_next_empty) == NULL) ||
 
-    
-    
+
+
 
 
     0
-  )
-    {
-      // If adding any of the tests fails, we tear down CUnit and exit
-      CU_cleanup_registry();
-      return CU_get_error();
-    }
+    )
+  {
+    // If adding any of the tests fails, we tear down CUnit and exit
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
 
   // Set the running mode. Use CU_BRM_VERBOSE for maximum output.
   // Use CU_BRM_NORMAL to only print errors and a summary
