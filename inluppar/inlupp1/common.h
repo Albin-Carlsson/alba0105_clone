@@ -27,7 +27,7 @@ union elem{
     int i;  //integer value
     bool b; //boolean valuea
     char* c;  //character pointer (for strings)
-    float f;  //floating point value
+    void *p;  
 };
 
 /// @brief Function pointer type for comparing two elements for equality.

@@ -1,34 +1,38 @@
 #include <stdio.h>
 
-void clear_input_buffer()
-{
-  int c;
-   do
-     {
-       c = getchar();
-     }
-   while (c != '\n');
-} 
+
+ 
 
 int read_string(char *buf, int buf_siz)
 {
-    int i=0; //counter
     int c;
-    while(i < buf_siz && c!='\n')
+    int count=0; //variabel för string-length
+    do
     {
-        c=getchar();  //tar ut en karaktär
-        buf[i]=c;     //lägger den i sträng arrayen
-        i++;
+      c=getchar();   //tar nästa tecken
+      buf[count]=c;   //lägger in karaktären i arrayen
+      if(c!='\n')
+      {
+        count++;      //incrementerar counten
+      }
     }
+    while (c !='\n'&& count<buf_siz); //så länge strängen inte tar slut
     
-    if (buf[i]!= '\n')
-    {
-        clear_input_buffer();
-    }
+    buf[count]='\0'; //null-terminate string
+    return count;
+}
 
-    buf[i-1]='\0';  //strängen vi läser är nullterminerad
+char *ask_question_string(char *question, char *buf, int buf_siz)
+{
+  int answer= 0; //keep track if input was succesfully read
+  
+  do
+  {
+    printf("%s", question);
+    answer= read_string(buf, buf_siz);
 
-    return i-1;
+  }
+  while (answer<1);
 }
 
 int main(void)
