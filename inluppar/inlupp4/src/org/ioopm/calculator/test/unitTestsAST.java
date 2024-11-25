@@ -48,7 +48,7 @@ public class unitTestsAST {
         assertTrue(a1.equals(a2));
         assertFalse(a1.isConstant());
         assertEquals(a1.getName(), "+");
-        assertEquals(a1.getPriority(),0 ); // 50 ?? 
+        assertEquals(a1.getPriority(),50 ); 
 
     }
 
