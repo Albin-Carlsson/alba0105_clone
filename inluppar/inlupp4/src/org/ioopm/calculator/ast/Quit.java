@@ -4,7 +4,7 @@ public class Quit extends Command {
 
     private static final Quit theInstance = new Quit();
 
-    private Quit() {
+    public Quit() {
     }
 
     public static Quit instance() {

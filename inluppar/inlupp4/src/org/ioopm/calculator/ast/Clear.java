@@ -4,7 +4,7 @@ public class Clear extends Command {
 
     private static final Clear theInstance = new Clear();
 
-    private Clear() {}
+    public Clear() {}
 
     public static Clear instance() {
         return theInstance;
