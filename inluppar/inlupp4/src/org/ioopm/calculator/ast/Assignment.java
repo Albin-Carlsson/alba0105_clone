@@ -18,6 +18,7 @@ public class Assignment extends Binary {
         lhs = lhs.eval(vars);
         vars.put((Variable) rhs, lhs);
         if (lhs.isConstant()) {
+
             return new Assignment(new Constant(lhs.getValue()), rhs);
         }
         return this;

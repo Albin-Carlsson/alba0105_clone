@@ -45,6 +45,7 @@ public class Calculator {
                         fullEvals++;
                     }
 
+                    vars.put(new Variable("ans"), result);
                     // print
                     System.out.println(result);
                 }
