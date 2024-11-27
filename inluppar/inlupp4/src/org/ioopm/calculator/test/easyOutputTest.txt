@@ -1,0 +1,11 @@
+Welcome to Symbolic Calculator!
+Enter expression: 4
+
+Enter expression: Error: Numbers cannot be used as a variable name
+
+Enter expression: 10 = x
+
+Enter expression: You have chosen to quit :/
+Total expressions: 2
+Successfully evaluated:2
+Fully evaluated: 1
