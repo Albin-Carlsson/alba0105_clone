@@ -7,7 +7,7 @@ public class Cos extends Unary {
     }
 
     public String getName() {
-        return "cos";
+        return "Cos";
     }
 
     public SymbolicExpression eval(Environment vars) throws IllegalAssignmentException {

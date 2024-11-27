@@ -7,7 +7,7 @@ public class Exp extends Unary {
     }
 
     public String getName() {
-        return "exp";
+        return "Exp";
     }
 
     public SymbolicExpression eval(Environment vars) throws IllegalAssignmentException {

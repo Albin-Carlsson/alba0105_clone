@@ -7,7 +7,7 @@ public class Log extends Unary {
     }
 
     public String getName() {
-        return "log";
+        return "Log";
     }
 
     public SymbolicExpression eval(Environment vars) throws IllegalAssignmentException {

@@ -7,7 +7,7 @@ public class Sin extends Unary {
     }
 
     public String getName() {
-        return "sin";
+        return "Sin";
     }
 
     public SymbolicExpression eval(Environment vars) throws IllegalAssignmentException {
