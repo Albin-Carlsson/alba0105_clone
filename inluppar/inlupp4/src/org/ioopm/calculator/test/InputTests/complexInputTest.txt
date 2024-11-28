@@ -1,0 +1,18 @@
+10 = y
+7 = x
+y*x = z
+z+3
+ans*3 = f
+z + f
+Cos(ans)
+-c
+-c * z
+-ans
+Log(ans)
+Sin(ans)
+ans + 3
+Exp(ans)
+ans = g
+g
+g + 3
+Quit

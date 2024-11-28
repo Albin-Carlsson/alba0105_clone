@@ -1,0 +1,39 @@
+Welcome to Symbolic Calculator!
+Enter expression: 10 = y
+
+Enter expression: 7 = x
+
+Enter expression: 70 = z
+
+Enter expression: 73
+
+Enter expression: 219 = f
+
+Enter expression: 289
+
+Enter expression: 0.9996482558795381
+
+Enter expression: -(c)
+
+Enter expression: -(c) * 70
+
+Enter expression: -(-(c) * 70)
+
+Enter expression: Log(-(-(c) * 70))
+
+Enter expression: Sin(Log(-(-(c) * 70)))
+
+Enter expression: Sin(Log(-(-(c) * 70))) + 3
+
+Enter expression: Exp(Sin(Log(-(-(c) * 70))) + 3)
+
+Enter expression: Exp(Sin(Log(-(-(c) * 70))) + 3) = g
+
+Enter expression: Exp(Sin(Log(-(-(c) * 70))) + 3)
+
+Enter expression: Exp(Sin(Log(-(-(c) * 70))) + 3) + 3
+
+Enter expression: You have chosen to quit :/
+Total expressions: 17
+Successfully evaluated:17
+Fully evaluated: 3

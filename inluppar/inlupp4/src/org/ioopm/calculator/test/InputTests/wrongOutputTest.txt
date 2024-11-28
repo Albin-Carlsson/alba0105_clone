@@ -1,0 +1,21 @@
+Welcome to Symbolic Calculator!
+Enter expression: Error: Numbers cannot be used as a variable name
+
+Enter expression: Error: cannot redefine named constant '2.718281828459045'
+
+Enter expression: expected ')'
+
+Enter expression: Infinity
+
+Enter expression: Error: Unexpected '#'
+
+Enter expression: Error: Expected number
+
+Enter expression: Error: Unexpected '￾'
+
+Enter expression: NaN
+
+Enter expression: You have chosen to quit :/
+Total expressions: 2
+Successfully evaluated:2
+Fully evaluated: 2

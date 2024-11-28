@@ -7,8 +7,8 @@ JUNIT_JAR = $(LIB_DIR)/junit-platform-console-standalone-1.8.1.jar
 all:
 	javac -d classes -sourcepath src src/org/ioopm/calculator/Calculator.java
 
-compile:
-run:
+
+run: all
     # java -cp classes org.ioopm.calculator.org.ioopm.calculator.Calculator
 	java -cp classes org.ioopm.calculator.Calculator
 
@@ -18,43 +18,16 @@ test:
 	javac -cp lib/junit-platform-console-standalone-1.8.1.jar -d classes -sourcepath src src/org/ioopm/calculator/test/integrationTests.java
 	java -jar $(JUNIT_JAR) -cp $(TEST_TARGET_DIR):$(TARGET_DIR) --scan-class-path
 
-test_output:
-	java -cp classes org.ioopm.calculator.Calculator < src/org/ioopm/calculator/test/easyInputTest.txt > src/org/ioopm/calculator/test/easyOutputTest.txt
-	diff src/org/ioopm/calculator/test/easyOutputTest.txt src/org/ioopm/calculator/test/easyExpectedOutputTest.txt
-
+test_output: all
+	java -cp classes org.ioopm.calculator.Calculator < src/org/ioopm/calculator/test/InputTests/easyInputTest.txt > src/org/ioopm/calculator/test/InputTests/easyOutputTest.txt
+	java -cp classes org.ioopm.calculator.Calculator < src/org/ioopm/calculator/test/InputTests/wrongInputTest.txt > src/org/ioopm/calculator/test/InputTests/wrongOutputTest.txt
+	java -cp classes org.ioopm.calculator.Calculator < src/org/ioopm/calculator/test/InputTests/complexInputTest.txt > src/org/ioopm/calculator/test/InputTests/complexOutputTest.txt
+	diff src/org/ioopm/calculator/test/InputTests/easyOutputTest.txt src/org/ioopm/calculator/test/InputTests/easyExpectedOutputTest.txt
+	diff src/org/ioopm/calculator/test/InputTests/wrongOutputTest.txt src/org/ioopm/calculator/test/InputTests/wrongExpectedOutput.txt
+	diff src/org/ioopm/calculator/test/InputTests/complexOutputTest.txt src/org/ioopm/calculator/test/InputTests/complexExpectedOutputTest.txt
 
 
 clean:
 	rm -rf classes
 	rm -rf test
 
-
-
-
-# Maven
-#MVN = mvn
-#
-#all: compile
-#
-#compile:
-#	mkdir -p $(TARGET_DIR)
-#	javac -d $(TARGET_DIR) -sourcepath $(JAVA_SOURCE_DIR) $(JAVA_SOURCE_DIR)/org/ioopm/calculator/**/*.java
-#	javac -d $(TARGET_DIR) -sourcepath $(JAVA_SOURCE_DIR) $(JAVA_SOURCE_DIR)/org/ioopm/calculator/Calculator.java
-#
-#
-#test-compile:
-#	mkdir -p $(TEST_TARGET_DIR)
-#	javac -d $(TEST_TARGET_DIR) -sourcepath $(JAVA_SOURCE_DIR):$(JAVA_TEST_DIR) -cp $(JUNIT_JAR):$(TARGET_DIR) $(JAVA_TEST_DIR)/org/ioopm/calculator/**/*.java
-#
-#run: compile
-#	java -cp $(TARGET_DIR) org.ioopm.calculator.Calculator
-#
-#test: test-compile
-#	java -jar $(JUNIT_JAR) --class-path $(TEST_TARGET_DIR):$(TARGET_DIR) --scan-class-path
-#
-#clean:
-#	rm -rf $(TARGET_DIR)
-#	rm -rf $(TEST_TARGET_DIR)
-#
-#maven:
-#	$(MVN) clean install
