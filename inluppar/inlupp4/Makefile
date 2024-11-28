@@ -20,13 +20,14 @@ test:
 
 test_output:
 	java -cp classes org.ioopm.calculator.Calculator < src/org/ioopm/calculator/test/easyInputTest.txt > src/org/ioopm/calculator/test/easyOutputTest.txt
-
-test_diff:
 	diff src/org/ioopm/calculator/test/easyOutputTest.txt src/org/ioopm/calculator/test/easyExpectedOutputTest.txt
+
+
 
 clean:
 	rm -rf classes
 	rm -rf test
+
 
 
 
