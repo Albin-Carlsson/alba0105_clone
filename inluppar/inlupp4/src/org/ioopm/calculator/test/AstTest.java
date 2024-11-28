@@ -1,18 +1,17 @@
 package org.ioopm.calculator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import org.ioopm.calculator.ast.*;
-import org.junit.Assert;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-public class unitTestsAST {
+public class AstTest {
+
+    @BeforeAll
+    static void initAll() {
+
+    }
 
     Constant c1 = new Constant(10);
     Constant c2 = new Constant(5);
@@ -43,30 +42,23 @@ public class unitTestsAST {
     Quit q = new Quit();
     Clear clear = new Clear();
 
-//    int expressions = 0;
-//    int evals = 0;
-//    int fullEvals = 0;
 
 
-    @BeforeAll
-    static void initAll() {
-    
+    @BeforeEach
+    void init() {
     }
 
     @Test
-    void additionTest() {
+    public void additionTest() {
         assertTrue(a1.equals(a2));
         assertFalse(a1.isConstant());
         assertEquals(a1.getName(), "+");
         assertEquals(a1.getPriority(),50 );
         assertEquals(a1.toString(), "5 + 10");
-//        Environment vars=new Environment();
-//        assertEquals(a1.eval(a1), c3);
-
     }
 
     @Test
-    void subtractionTest(){
+    public void subtractionTest(){
         assertTrue(sub1.equals(sub2));
         assertTrue(sub2.equals(sub1));
         assertFalse(sub2.isConstant());
@@ -77,7 +69,7 @@ public class unitTestsAST {
    }
 
     @Test
-    void constantTest(){
+    public void constantTest(){
         assertTrue(c1.isConstant());
         assertTrue(c2.isConstant());
         assertFalse(c1.equals(c2));
@@ -86,7 +78,7 @@ public class unitTestsAST {
     }
 
      @Test
-     void multiplicationTest(){
+     public void multiplicationTest(){
         assertFalse(m2.isConstant());
         assertEquals(m2.getName(), "*");
         assertFalse(m2.isCommand());
@@ -98,7 +90,7 @@ public class unitTestsAST {
      }
 
     @Test
-    void variableTest(){
+    public void variableTest(){
         assertFalse(v.isConstant());
         assertEquals(v.getName(), "x");
         assertEquals(v.toString(), "x");
@@ -106,39 +98,39 @@ public class unitTestsAST {
     }
 
     @Test
-    void sinTest(){
-        assertEquals(sin.getName(), "sin");
-        assertEquals(sin.toString(), "sin(" + piii + ")");
+    public void sinTest(){
+        assertEquals(sin.getName(), "Sin");
+        assertEquals(sin.toString(), "Sin(" + piii + ")");
 
     }
 
     @Test
-    void cosTest(){
-        assertEquals(cos.getName(), "cos");
-        assertEquals(cos.toString(), "cos(" + piii + ")");
+    public void cosTest(){
+        assertEquals(cos.getName(), "Cos");
+        assertEquals(cos.toString(), "Cos(" + piii + ")");
     }
 
     @Test
-    void expTest(){
-        assertEquals(e.getName(), "exp");
-        assertEquals(e.toString(), "exp(" + 5 + ")");
+    public void expTest(){
+        assertEquals(e.getName(), "Exp");
+        assertEquals(e.toString(), "Exp(" + 5 + ")");
     }
 
     @Test
-    void negationTest(){
+    public void negationTest(){
         assertEquals(n1.getName(), "-");
         assertEquals(n1.toString(), "-" +"(" + m1 + ")");
     }
 
     @Test
-    void logTest(){
-        assertEquals(log.getName(), "log");
-        assertEquals(log.toString(), "log(" + 10 + ")");
+    public void logTest(){
+        assertEquals(log.getName(), "Log");
+        assertEquals(log.toString(), "Log(" + 10 + ")");
     }
 
 
     @Test
-    void commandTest(){
+    public void commandTest(){
        assertTrue(q.isCommand());
        assertTrue(clear.isCommand());
        assertFalse(q.isConstant());
@@ -156,7 +148,7 @@ public class unitTestsAST {
     }
 
     @Test
-    void assignTest(){
+    public void assignTest(){
         assertEquals(assignment.getName(), "=");
         assertEquals(assignment.getPriority(), 0);
         assertFalse(assignment.isConstant());
