@@ -10,15 +10,15 @@
  * @date 07 Oct 2024
  * @brief Simple generic hash table implementation.
  *
- * This header file contains the structures for the hash table and other structs used to implement the generic hash table. The hash table is generic and can store different types of key value pairs, 
- * which are represented by elem_t. This hash table uses linked lists to handle collisions in each bucket (chaining). 
- * It is also possible to creeate custom hash functions and equality functions for keys and value. One hash table can only contain one type of data, 
- * meaning you need to keep track of the datatype for each hash table, and make sure you call functions with the matching data type. 
- * Beware when creating a hash table make sure to call with right equality function to match the datatype of the hash table. 
- * 
- * The hash table has a fixed number of buckets (NO_Buckets), this number can be adjusted. 
- * 
- * The hash table supports basic operations like insertion, lookup and deletion. 
+ * This header file contains the structures for the hash table and other structs used to implement the generic hash table. The hash table is generic and can store different types of key value pairs,
+ * which are represented by elem_t. This hash table uses linked lists to handle collisions in each bucket (chaining).
+ * It is also possible to creeate custom hash functions and equality functions for keys and value. One hash table can only contain one type of data,
+ * meaning you need to keep track of the datatype for each hash table, and make sure you call functions with the matching data type.
+ * Beware when creating a hash table make sure to call with right equality function to match the datatype of the hash table.
+ *
+ * The hash table has a fixed number of buckets (NO_Buckets), this number can be adjusted.
+ *
+ * The hash table supports basic operations like insertion, lookup and deletion.
  * The ht provides support for applying functions to all elements and checking predicates for all key-value pairs in the ht.
  * @see $CANVAS_OBJECT_REFERENCE$/assignments/gb54499f3b7b264e3af3b68c756090f52
  */
@@ -27,11 +27,19 @@
  //DEFINITIONS
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t;
+typedef struct entry entry_t;
+
+struct entry {
+  elem_t key;       // holds the key
+  elem_t value;   // holds the value
+  entry_t* next; // points to the next entry (possibly NULL)
+};
+
 
 /**
  * @typedef ioopm_predicate
  * @brief Function pointer type for predicates used in the ht
- * A predicate function takes a key, value, and an extra argument, 
+ * A predicate function takes a key, value, and an extra argument,
  * a equality function is also passed in the function,
  * returning true or false based on some condition.
  */
@@ -54,10 +62,10 @@ typedef int ioopm_hash_function(elem_t);
 
 /**
  * @struct option
- * @brief option is used as a return value in functions where we want to be able to signal if something has gone wrong, 
+ * @brief option is used as a return value in functions where we want to be able to signal if something has gone wrong,
  but also indictae a successful operation. Option also returns the value in a
  */
-struct option{
+struct option {
   bool success;  //whether the lookup was succesful
   elem_t value;   //the value associated with the key
 };
@@ -158,5 +166,27 @@ int int_key_hfunc(elem_t elem);
 /// @return int, to be used as key
 int string_key_hfunc(elem_t elem);
 
+/// @brief Helper function for ioopm_hash_table_insert. 
+///   Updates an existing key's value or inserts a new key-value pair into the bucket.
+/// @param bucket The head of the linked list (bucket).
+/// @param key The key to insert or update.
+/// @param value The value to associate with the key.
+/// @param eq_fn The equality function used to compare keys.
+void update_or_insert(entry_t* bucket, elem_t key, elem_t value, ioopm_eq_function* eq_fn);
 
+/// @brief helper function for ioopm_hash_table_insert
+///   Initializes a bucket with a new key-value pair as its first entry.
+/// @param bucket The bucket to initialize.
+/// @param key The key to insert.
+/// @param value The value to associate with the key.
+void initialize_bucket(entry_t* bucket, elem_t key, elem_t value);
+
+/// @brief Helper function for ioopm_hash_table_insert
+/// Checks if the bucket is uninitialized and matches the given key.
+/// Used to determine whether to initialize the bucket with a new entry.
+/// @param bucket The bucket to check.
+/// @param key The key being inserted.
+/// @param eq_fn The equality function for keys.
+/// @return true if the bucket is uninitialized and matches the key, false otherwise.
+bool is_empty_and_matching(entry_t* bucket, elem_t key, ioopm_eq_function* eq_fn);
 

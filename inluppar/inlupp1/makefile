@@ -63,7 +63,7 @@ profile: freq_count.c
 	gcc -pg -o my_program freq_count.c hash_table.c linked_list.c iterator.c
 
 clean: 
-	rm -f *.gcno  *.gcda *.info *.gcov hash_hable_tests linked_list_tests iterator_tests freq_count_tests
+	rm -f *.gcno  *.gcda *.info *.gcov hash_hable_tests linked_list_tests iterator_tests freq_count_tests hash_table linked_list iterator
 	rm -rf coverage_report/
 
 comp_test: hash_test list_test iter_test freq_test
