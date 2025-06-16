@@ -5,6 +5,9 @@
 void test_change_value(elem_t key, elem_t* value, elem_t arg);
 bool test_hash_table_all_value(ioopm_hash_table_t* ht, elem_t value);
 
+void test_change_value(elem_t key, elem_t* value, elem_t arg) {
+  *value = arg;
+}
 int init_suite(void) {
   // Change this function if you want to do something *before* you
   // run a test suite

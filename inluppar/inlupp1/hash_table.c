@@ -20,13 +20,6 @@ typedef struct option option_t;
 typedef bool ioopm_predicate(elem_t key, elem_t value, elem_t extra, ioopm_eq_function* eq_fn);
 typedef void ioopm_apply_function(elem_t key, elem_t* value, elem_t extra);
 
-
-struct entry{
-  elem_t key;       // holds the key
-  elem_t value;   // holds the value
-  entry_t* next; // points to the next entry (possibly NULL)
-};
-
 struct hash_table {
   entry_t buckets[No_Buckets];
   ioopm_hash_function* hash_function;
@@ -38,7 +31,7 @@ struct hash_table {
 int int_key_hfunc(elem_t elem) {
   int key = elem.i;
   if (key < 0) {
-    key = abs(key);  //om int är negativt, tar absolutbeloppet
+    key = abs(key);  //if int is negative, take absolute value
   }
   return key % No_Buckets;
 }
@@ -112,33 +105,38 @@ static entry_t* find_previous_entry_for_key(entry_t* head, elem_t key1, ioopm_eq
   return previous; // Return the previous entry
 }
 
+bool is_empty_and_matching(entry_t* bucket, elem_t key, ioopm_eq_function* eq_fn) {
+  return bucket->next == NULL && eq_fn != NULL && eq_fn(bucket->key, key);
+}
 
-void ioopm_hash_table_insert(ioopm_hash_table_t* ht, elem_t key, elem_t value) {
-  int int_key = ht->hash_function(key); // Calculate the bucket index
-  ioopm_eq_function* eq_fn_key = ht->eq_fn_key;
+void initialize_bucket(entry_t* bucket, elem_t key, elem_t value) {
+  bucket->next = entry_create(key, value, NULL);
+}
 
-  entry_t* bucket = &ht->buckets[int_key]; // Get the head of the bucket
-
-  // Check if the bucket is empty (uninitialized linked list)
-  if (bucket->next == NULL && eq_fn_key != NULL && eq_fn_key(bucket->key, key)) {
-    // Initialize bucket with the first entry if needed
-    bucket->next = entry_create(key, value, NULL);
-    return;
-  }
-
-  // Find the previous entry for the given key
-  entry_t* previous = find_previous_entry_for_key(bucket, key, eq_fn_key);
+void update_or_insert(entry_t* bucket, elem_t key, elem_t value, ioopm_eq_function* eq_fn) {
+  entry_t* previous = find_previous_entry_for_key(bucket, key, eq_fn);
   entry_t* next = previous->next;
 
-  // If key exists, update the value
-  if (next != NULL && eq_fn_key(next->key, key)) {
+  if (next != NULL && eq_fn(next->key, key)) {
     next->value = value;
   }
   else {
-    // Otherwise, insert the new key-value pair
     previous->next = entry_create(key, value, next);
   }
 }
+
+void ioopm_hash_table_insert(ioopm_hash_table_t* ht, elem_t key, elem_t value) {
+  int int_key = ht->hash_function(key); // Calculate the bucket index
+  entry_t* bucket = &ht->buckets[int_key]; // Get the head of the bucket
+  ioopm_eq_function* eq_fn_key = ht->eq_fn_key;
+
+  if (is_empty_and_matching(bucket, key, eq_fn_key)) {
+    initialize_bucket(bucket, key, value);
+    return;
+  }
+  update_or_insert(bucket, key, value, eq_fn_key);
+}
+
 
 
 option_t ioopm_hash_table_lookup(ioopm_hash_table_t* ht, elem_t key) {
@@ -166,7 +164,7 @@ option_t ioopm_hash_table_lookup(ioopm_hash_table_t* ht, elem_t key) {
 }
 
 
-option_t ioopm_hash_table_remove(ioopm_hash_table_t* ht, elem_t key){
+option_t ioopm_hash_table_remove(ioopm_hash_table_t* ht, elem_t key) {
   ioopm_eq_function* eq_fn_key = ht->eq_fn_key;
   /// Calculate the bucket for this entry
 
@@ -198,7 +196,7 @@ int ioopm_hash_table_size(ioopm_hash_table_t* ht) {
   int size = 0;
   for (int i = 0; i < No_Buckets; ++i)
   {
-    //exkluderar dummy
+    //excludes dummy
     entry_t* current_bucket = &ht->buckets[i];
     entry_t* current_entry = current_bucket->next;
     while (current_entry) {
@@ -348,8 +346,3 @@ void ioopm_hash_table_apply_to_all(ioopm_hash_table_t* ht, ioopm_apply_function*
     }
   }
 }
-
-void test_change_value(elem_t key, elem_t* value, elem_t arg) {
-  *value = arg;
-}
-
